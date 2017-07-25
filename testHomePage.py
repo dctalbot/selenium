@@ -1,118 +1,133 @@
 from random_words import LoremIpsum
 from selenium.webdriver.common.keys import Keys
 from utility import *
+import time
 li = LoremIpsum()
 
 # preferences-------------------------------------------------------------------
 
-# ordered sequence of columns to add
-# this should be mutable to allow for testing of
-# various Home Page configurations
-# as long as the cols of each row sum to 3
+# ordered sequence of columns in rows.
+# Must start with Feature (3) as of now.
+# The idea is that this list should be the only thing you need to change
+# when testing various Home Page configurations. But for now it must start with feature (3)
+# Feel free to move around other columns
+# Just make sure the column widths of each row sum to 3
 column_sequence = [
-'Feature (3)',
-
-'Promo Row (3)',
-
-'Promo Column (1)',
-'In The News Listing (1)',
-'Single Promo (1)',
+'Feature (3)', # This must be at the top.
 
 'Department Highlights (3)',
 
-'Link Column (1)',
-'Events (1)',
-'Single Promo (1)',
-
 'Section Title (3)',
 
+'Promo Row (3)',
+
+'Events (1)',
+'News Listing (1)',
+'In The News Listing (1)',
+
 'Video (2)',
-'News Listing (1)'
+'Link Column (1)',
+
+'Promo Column (1)',
+'Single Promo (1)',
+'Single Promo (1)'
 ]
 
-# you can change the number of subrows that appear under sections like
+# you can also change the number of subrows that appear under sections like
 # Department Highlights or Link Column
 subrows = 2
 
-#-------------------------------------------------------------------------------
+# upload a sample image to your Wordpress media library
+# and use this keyword to search for it
+sample_image_keyword = '1280'
 
-def test_home_page(browser):
+# helpers-----------------------------------------------------------------------
 
-    def fill_feature():
-        link_labels = browser.find_elements_by_xpath("//label[text()='Link']")
-        for link_label in link_labels:
-            if link_label.is_displayed():
-                link_label.click()
-                link_label.send_keys('www.placekitten.com/1280/720', Keys.TAB,
-                    li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
-                    li.get_sentences(2), Keys.TAB)
-                break
+def fill_feature():
+    link_labels = browser.find_elements_by_xpath("//label[text()='Link']")
+    for link_label in link_labels:
+        if link_label.is_displayed():
+            link_label.click()
+            link_label = get_active_element(browser)
+            link_label.send_keys('www.placekitten.com/1280/720', Keys.TAB,
+                li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
+                li.get_sentence(), Keys.TAB)
+            break
 
-    def fill_promo_column():
+def fill_promo_column():
+    form = get_active_element(browser)
+    for sec in range(2):
+        form.send_keys(li.get_sentence(), Keys.TAB, 'www.placekitten.com/1280/720',
+            Keys.TAB, li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB)
         form = get_active_element(browser)
-        for sec in range(2):
-            form.send_keys(li.get_sentence(), Keys.TAB, 'www.placekitten.com/1280/720',
-                Keys.TAB, li.get_sentences(2), Keys.TAB, li.get_sentences(2), Keys.TAB)
-            form = get_active_element(browser)
 
-    def fill_in_the_news_listing():
-        form = get_active_element(browser)
-        form.send_keys('www.google.com', Keys.TAB,'www.google.com', Keys.TAB,'www.google.com', Keys.TAB)
+def fill_in_the_news_listing():
+    form = get_active_element(browser)
+    api = config.get('API Sources', 'in_the_news')
+    external = config.get('API Sources', 'in_the_news_external')
+    form.send_keys(api, Keys.TAB, external, Keys.TAB,'www.placekitten.com', Keys.TAB)
 
-    def fill_single_promo():
-        form = get_active_element(browser)
-        form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentences(2), Keys.TAB,
-            'www.placekitten/200/300', Keys.TAB, li.get_sentence(), Keys.TAB)
+def fill_single_promo():
+    form = get_active_element(browser)
+    form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
+        'www.placekitten/200/300', Keys.TAB, li.get_sentence(), Keys.TAB)
 
-    def fill_dept_highlights():
+def fill_dept_highlights():
+    form = get_active_element(browser)
+    form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
+        li.get_sentence(), Keys.TAB, 'www.placekitten.com/350/400',
+        Keys.TAB, "Click here to learn more", Keys.TAB)
+    form = get_active_element(browser)
+    for x in range(subrows):
+        form.send_keys('Example Title', Keys.TAB, li.get_sentence(), Keys.TAB,
+        'www.placekitten.com', Keys.TAB)
         form = get_active_element(browser)
+
+
+def fill_promo_row():
+    form = get_active_element(browser)
+    for sec in range(3):
         form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
-            li.get_sentences(2), Keys.TAB, 'www.placekitten.com/350/400',
-            Keys.TAB, "Click here to learn more", Keys.TAB)
+        'www.placekitten.com/350/400', Keys.TAB, li.get_sentence(), Keys.TAB)
         form = get_active_element(browser)
-        for x in range(subrows):
-            form.send_keys('Example Title', Keys.TAB, li.get_sentence(), Keys.TAB,
-            'www.placekitten.com', Keys.TAB)
-            form = get_active_element(browser)
 
-
-    def fill_promo_row():
+def fill_link_column():
+    form = get_active_element(browser)
+    form.send_keys('Quick Links', Keys.TAB)
+    form = get_active_element(browser)
+    for x in range(subrows):
+        form.send_keys('www.placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
         form = get_active_element(browser)
-        for sec in range(3):
-            form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentences(2), Keys.TAB,
-            'www.placekitten.com/350/400', Keys.TAB, li.get_sentence(), Keys.TAB)
-            form = get_active_element(browser)
 
-    def fill_link_column():
-        form = get_active_element(browser)
-        form.send_keys('Just Some Links', Keys.TAB)
-        form = get_active_element(browser)
-        for x in range(subrows):
-            form.send_keys('www.placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
-            form = get_active_element(browser)
+def fill_events():
+    form = get_active_element(browser)
+    api = config.get('API Sources', 'events')
+    form.send_keys('Events Listing', Keys.TAB, 'placekitten.com', Keys.TAB, api, Keys.TAB)
 
-    def fill_events():
-        form = get_active_element(browser)
-        form.send_keys('Events Listing', Keys.TAB,
-            'placekitten.com', Keys.TAB, 'placekitten.com', Keys.TAB)
+def fill_section_title():
+    form = get_active_element(browser)
+    form.send_keys('Another Section', Keys.TAB)
 
-    def fill_section_title():
-        form = get_active_element(browser)
-        form.send_keys('Another Section', Keys.TAB)
+def fill_video():
+    form = get_active_element(browser)
+    form.send_keys('https://www.youtube.com/watch?v=dMH0bHeiRNg', Keys.TAB,
+        li.get_sentence(), Keys.TAB)
 
-    def fill_video():
-        form = get_active_element(browser)
-        form.send_keys('https://www.youtube.com/watch?v=dMH0bHeiRNg', Keys.TAB,
-            li.get_sentence(), Keys.TAB)
-
-    def fill_news_listing():
-        form = get_active_element(browser)
-        form.send_keys('Recent News', Keys.TAB, 'placekitten.com', Keys.TAB,
-            'placekitten.com', Keys.TAB)
+def fill_news_listing():
+    form = get_active_element(browser)
+    api = config.get('API Sources', 'news_listing')
+    form.send_keys('Recent News', Keys.TAB, 'placekitten.com', Keys.TAB, api, Keys.TAB)
 
 
+
+
+
+# driver------------------------------------------------------------------------
+def test_home_page():
     # new page
     browser.get('https://aerodev.engin.umich.edu/wp-admin/post-new.php?post_type=page')
+
+    print 'Building a Home Page...'
 
     # select template
     browser.find_element_by_xpath("//select[@id='page_template']/option[text()='Home Page']").click()
@@ -128,6 +143,8 @@ def test_home_page(browser):
             add_row = elem
             break
 
+    # remove admin bar that sometimes hides elements
+    browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
 
     cols_in_row = 0
     add_row.click()
@@ -150,8 +167,8 @@ def test_home_page(browser):
 
 
         add_col.click()
-        cols_in_row += int(column_sequence[row][-2])
-        print cols_in_row
+        cols_in_row += int(column_sequence[row][-2]) # record row width
+
         browser.find_element_by_link_text(column_sequence[row]).click()
         browser.find_element_by_id('footer-upgrade').click() # click away
 
@@ -177,23 +194,31 @@ def test_home_page(browser):
     'In The News Listing (1)' : fill_in_the_news_listing
     }
 
+    print 'Writing lots of content...'
     for index in range(len(column_sequence)):
         dispatcher[column_sequence[index]]()
-    quit()
 
 
-
-
-
-    # TODO somehow automate adding images
+    # add images
+    print 'Adding some photos...'
     add_image_buttons = browser.find_elements_by_link_text("Add Image")
     for add_image in add_image_buttons:
         if add_image.is_displayed():
             add_image.click()
-            break
+            time.sleep(3)
+            search = browser.find_element_by_id('media-search-input')
+            search.send_keys(sample_image_keyword)
+            time.sleep(5)
+            search.click()
+            search.send_keys(Keys.TAB, Keys.ENTER)
+            browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
 
-
-    # click image
+    # preview
+    print 'Generating preview...'
+    preview = browser.find_element_by_id('post-preview')
     time.sleep(1)
-    browser.find_element_by_id('media-search-input').send_keys(Keys.TAB, Keys.ENTER)
-    browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
+    preview.click()
+    browser.switch_to_window(browser.window_handles[1])
+
+    print 'Done'
+    print 'Ok, great. Now you can make all the manual edits you want.'
