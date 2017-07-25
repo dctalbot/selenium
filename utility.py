@@ -26,10 +26,10 @@ browser = webdriver.Firefox() if 'x' in config.get('Settings', 'browser', 1) els
 
 
 def login():
-    uniqname = config.get('Settings', 'uniqname')
-    password = config.get('Settings', 'password')
-    # uniqname = raw_input('Enter your uniqname: ')
-    # password = raw_input('Password: ')
+    # uniqname = config.get('Settings', 'uniqname')
+    # password = config.get('Settings', 'password')
+    uniqname = raw_input('Enter your uniqname: ')
+    password = raw_input('Password: ')
     site_login = config.get('Settings', 'site_login')
 
     if uniqname is 'uniqname' or password is 'password':
