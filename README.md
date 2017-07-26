@@ -1,12 +1,27 @@
-This is a Selenium Webdriver script to automate Wordpress testing.
-It is tentatively called Scribe.
+# Scribe ~ A Selenium Webdriver script to automate Wordpress testing.
 
-Before running, make sure the General Settings in settings.cfg are what you want them to be.
-Namely, the Wordpress Login url and the browser e.g. Chrome.
+## Setup
+Make sure the General Settings in settings.cfg are what you want them to be.
+These include your username, password, the Wordpress Login url of the site you wish to test, and the browser e.g. Chrome.
 
-Firefox requires the geckodriver. Google Chrome requires the ChromeDriver.
+Firefox requires the geckodriver. Chrome requires the ChromeDriver.
 
-Next, simply run python scribe.py
+## Run
+
+        python scribe.py
 
 Once you select an option, view the browser in which the script is running and move your cursor off the screen.
 This prevents unwanted hover actions.
+
+## Troubleshooting
+These tests should ideally be run on a large monitor with a decent computer.
+Once the script starts, move you cursor off the screen and keep the window open.
+
+### Screenshots
+My screenshots probably will come out a bit wonky. Instead, you can use browsers' built-in capabilities:
+
+#### Firefox
+Type this: Shift+F2 screenshot --fullpage
+
+#### Chrome
+⌘⌥I -> ⌘+Shift+M -> ⋮ -> Capture Full Size Screenshot
