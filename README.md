@@ -1,4 +1,4 @@
-# Scribe ~ A Selenium Webdriver script to automate Wordpress testing.
+# Scribe ~ A Selenium script to automate Wordpress testing.
 
 ## Setup
 Make sure the General Settings in settings.cfg are what you want them to be.
@@ -18,7 +18,7 @@ These tests should ideally be run on a large monitor with a decent computer.
 Once the script starts, move you cursor off the screen and keep the window open.
 
 ### Screenshots
-My screenshots probably will come out a bit wonky. Instead, you can use browsers' built-in capabilities:
+My screenshots will probably come out a bit wonky. Instead, you can use a browser's built-in capability:
 
 #### Firefox
 Type this: Shift+F2 screenshot --fullpage
