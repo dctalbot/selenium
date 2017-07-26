@@ -7,6 +7,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 import ConfigParser
+import os
+import time
+from PIL import Image
 
 config = ConfigParser.ConfigParser()
 config.read('settings.cfg')
@@ -26,18 +29,17 @@ browser = webdriver.Firefox() if 'x' in config.get('Settings', 'browser', 1) els
 
 
 def login():
-    # uniqname = config.get('Settings', 'uniqname')
-    # password = config.get('Settings', 'password')
-    uniqname = raw_input('Enter your uniqname: ')
-    password = raw_input('Password: ')
+    uniqname = config.get('Settings', 'uniqname')
+    password = config.get('Settings', 'password')
     site_login = config.get('Settings', 'site_login')
 
-    if uniqname is 'uniqname' or password is 'password':
-        print "You need to change the settings in the configuration file."
+    if uniqname is 'un' or password is 'pw':
+        print "Please set the username and password in the configuration file."
         exit()
 
     browser.implicitly_wait(5) # seconds
     browser.get(site_login)
+    time.sleep(1) # sometimes chrome is too fast
 
     # Log in
     browser.find_element_by_id('user_login').send_keys(uniqname + '@umich.edu', Keys.TAB, password, Keys.ENTER)

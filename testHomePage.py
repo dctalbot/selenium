@@ -4,16 +4,18 @@ from utility import *
 import time
 li = LoremIpsum()
 
+
+
 # preferences-------------------------------------------------------------------
 
-# ordered sequence of columns in rows.
+# Ordered sequence of columns in rows.
 # Must start with Feature (3) as of now.
 # The idea is that this list should be the only thing you need to change
 # when testing various Home Page configurations. But for now it must start with feature (3)
-# Feel free to move around other columns
+# Feel free to add/delete/move other columns and rows
 # Just make sure the column widths of each row sum to 3
 column_sequence = [
-'Feature (3)', # This must be at the top.
+'Feature (3)', # This must come first
 
 'Department Highlights (3)',
 
@@ -33,13 +35,17 @@ column_sequence = [
 'Single Promo (1)'
 ]
 
-# you can also change the number of subrows that appear under sections like
-# Department Highlights or Link Column
+# you can also change the number of subrows that appear under
+# sections like Department Highlights or Link Column
 subrows = 2
 
-# upload a sample image to your Wordpress media library
-# and use this keyword to search for it
+# upload a sample image to your Wordpress media
+# library and use this keyword to search for it
 sample_image_keyword = '1280'
+
+
+
+
 
 # helpers-----------------------------------------------------------------------
 
@@ -49,7 +55,7 @@ def fill_feature():
         if link_label.is_displayed():
             link_label.click()
             link_label = get_active_element(browser)
-            link_label.send_keys('www.placekitten.com/1280/720', Keys.TAB,
+            link_label.send_keys('http://placekitten.com', Keys.TAB,
                 li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
                 li.get_sentence(), Keys.TAB)
             break
@@ -57,7 +63,7 @@ def fill_feature():
 def fill_promo_column():
     form = get_active_element(browser)
     for sec in range(2):
-        form.send_keys(li.get_sentence(), Keys.TAB, 'www.placekitten.com/1280/720',
+        form.send_keys(li.get_sentence(), Keys.TAB, 'http://placekitten.com',
             Keys.TAB, li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB)
         form = get_active_element(browser)
 
@@ -65,30 +71,29 @@ def fill_in_the_news_listing():
     form = get_active_element(browser)
     api = config.get('API Sources', 'in_the_news')
     external = config.get('API Sources', 'in_the_news_external')
-    form.send_keys(api, Keys.TAB, external, Keys.TAB,'www.placekitten.com', Keys.TAB)
+    form.send_keys(api, Keys.TAB, external, Keys.TAB,'http://placekitten.com', Keys.TAB)
 
 def fill_single_promo():
     form = get_active_element(browser)
     form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
-        'www.placekitten/200/300', Keys.TAB, li.get_sentence(), Keys.TAB)
+        'http://placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
 
 def fill_dept_highlights():
     form = get_active_element(browser)
     form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
-        li.get_sentence(), Keys.TAB, 'www.placekitten.com/350/400',
+        li.get_sentence(), Keys.TAB, 'http://placekitten.com',
         Keys.TAB, "Click here to learn more", Keys.TAB)
     form = get_active_element(browser)
     for x in range(subrows):
         form.send_keys('Example Title', Keys.TAB, li.get_sentence(), Keys.TAB,
-        'www.placekitten.com', Keys.TAB)
+        'http://placekitten.com', Keys.TAB)
         form = get_active_element(browser)
-
 
 def fill_promo_row():
     form = get_active_element(browser)
     for sec in range(3):
         form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
-        'www.placekitten.com/350/400', Keys.TAB, li.get_sentence(), Keys.TAB)
+        'http://placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
         form = get_active_element(browser)
 
 def fill_link_column():
@@ -96,13 +101,13 @@ def fill_link_column():
     form.send_keys('Quick Links', Keys.TAB)
     form = get_active_element(browser)
     for x in range(subrows):
-        form.send_keys('www.placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
+        form.send_keys('http://placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
         form = get_active_element(browser)
 
 def fill_events():
     form = get_active_element(browser)
     api = config.get('API Sources', 'events')
-    form.send_keys('Events Listing', Keys.TAB, 'placekitten.com', Keys.TAB, api, Keys.TAB)
+    form.send_keys('Events Listing', Keys.TAB, 'http://placekitten.com', Keys.TAB, api, Keys.TAB)
 
 def fill_section_title():
     form = get_active_element(browser)
@@ -116,13 +121,13 @@ def fill_video():
 def fill_news_listing():
     form = get_active_element(browser)
     api = config.get('API Sources', 'news_listing')
-    form.send_keys('Recent News', Keys.TAB, 'placekitten.com', Keys.TAB, api, Keys.TAB)
+    form.send_keys('Recent News', Keys.TAB, 'http://placekitten.com', Keys.TAB, api, Keys.TAB)
 
 
 
 
 
-# driver------------------------------------------------------------------------
+# create home page -------------------------------------------------------------
 def test_home_page():
     # new page
     browser.get('https://aerodev.engin.umich.edu/wp-admin/post-new.php?post_type=page')
@@ -205,10 +210,10 @@ def test_home_page():
     for add_image in add_image_buttons:
         if add_image.is_displayed():
             add_image.click()
-            time.sleep(3)
+            time.sleep(1.5)
             search = browser.find_element_by_id('media-search-input')
             search.send_keys(sample_image_keyword)
-            time.sleep(5)
+            time.sleep(4)
             search.click()
             search.send_keys(Keys.TAB, Keys.ENTER)
             browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
@@ -220,5 +225,66 @@ def test_home_page():
     preview.click()
     browser.switch_to_window(browser.window_handles[1])
 
-    print 'Done'
-    print 'Ok, great. Now you can make all the manual edits you want.'
+
+
+
+
+# stitch together screenshots and save a fullpage screenshot -------------------
+# from https://gist.github.com/fabtho/13e4a2e7cfbfde671b8fa81bbe9359fb
+def homepage_screenshot(driver, file):
+    print "Taking a screenshot and naming it " + file + "..."
+    verbose = False # manual toggle for debugging
+
+    # from http://stackoverflow.com/questions/1145850/how-to-get-height-of-entire-document-with-javascript
+    js = 'return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);'
+
+    scrollheight = browser.execute_script(js)
+    viewport_height = driver.execute_script("return window.innerHeight")
+
+
+
+    slices = []
+    offset = 0
+    firstIteration = True
+    while offset < scrollheight:
+        if verbose:
+            print "offset1:", offset
+
+        # hide admin and nav after first screenshot
+        if not firstIteration:
+            browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
+            browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'none';")
+
+        browser.execute_script("window.scrollTo(0, %s);" % offset)
+        time.sleep(2)
+        img = Image.open(StringIO(browser.get_screenshot_as_png()))
+        slices.append(img)
+
+
+        viewport_height = driver.execute_script("return window.innerHeight")
+        offset += (img.size[1] - viewport_height)
+
+        firstIteration = False
+
+
+        if verbose:
+            print "scrollheight: ", scrollheight
+
+
+    # sum heights of slices
+    # final_height = 0
+    # for img in slices:
+    #     final_height += img.size[1]
+    final_height = slices[0].size[1] * len(slices)
+
+    screenshot = Image.new('RGB', (slices[0].size[0], final_height))
+    offset = 0
+    for img in slices:
+        screenshot.paste(img, (0, offset))
+        offset += img.size[1]
+
+    screenshot.save(file)
+
+    # show admin and nav
+    browser.execute_script("document.getElementById('wpadminbar').style.display = 'initial';")
+    browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'initial';")
