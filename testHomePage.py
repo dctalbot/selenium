@@ -1,5 +1,6 @@
 from random_words import LoremIpsum
 from selenium.webdriver.common.keys import Keys
+from cStringIO import StringIO
 from utility import *
 import time
 li = LoremIpsum()
@@ -211,6 +212,8 @@ def test_home_page():
         if add_image.is_displayed():
             add_image.click()
             time.sleep(1.5)
+            media_tab = browser.find_element_by_link_text("Media Library")
+            media_tab.click()
             search = browser.find_element_by_id('media-search-input')
             search.send_keys(sample_image_keyword)
             time.sleep(4)
