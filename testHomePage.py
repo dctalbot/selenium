@@ -1,10 +1,5 @@
-from random_words import LoremIpsum
-from selenium.webdriver.common.keys import Keys
-from cStringIO import StringIO
 from utility import *
-import time
-li = LoremIpsum()
-
+from cStringIO import StringIO
 
 
 # preferences-------------------------------------------------------------------
@@ -55,72 +50,72 @@ def fill_feature():
     for link_label in link_labels:
         if link_label.is_displayed():
             link_label.click()
-            link_label = get_active_element(browser)
+            link_label = get_active_element()
             link_label.send_keys('http://placekitten.com', Keys.TAB,
                 li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
                 li.get_sentence(), Keys.TAB)
             break
 
 def fill_promo_column():
-    form = get_active_element(browser)
+    form = get_active_element()
     for sec in range(2):
         form.send_keys(li.get_sentence(), Keys.TAB, 'http://placekitten.com',
             Keys.TAB, li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB)
-        form = get_active_element(browser)
+        form = get_active_element()
 
 def fill_in_the_news_listing():
-    form = get_active_element(browser)
+    form = get_active_element()
     api = config.get('API Sources', 'in_the_news')
     external = config.get('API Sources', 'in_the_news_external')
     form.send_keys(api, Keys.TAB, external, Keys.TAB,'http://placekitten.com', Keys.TAB)
 
 def fill_single_promo():
-    form = get_active_element(browser)
+    form = get_active_element()
     form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
         'http://placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
 
 def fill_dept_highlights():
-    form = get_active_element(browser)
+    form = get_active_element()
     form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
         li.get_sentence(), Keys.TAB, 'http://placekitten.com',
         Keys.TAB, "Click here to learn more", Keys.TAB)
-    form = get_active_element(browser)
+    form = get_active_element()
     for x in range(subrows):
         form.send_keys('Example Title', Keys.TAB, li.get_sentence(), Keys.TAB,
         'http://placekitten.com', Keys.TAB)
-        form = get_active_element(browser)
+        form = get_active_element()
 
 def fill_promo_row():
-    form = get_active_element(browser)
+    form = get_active_element()
     for sec in range(3):
         form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentence(), Keys.TAB,
         'http://placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
-        form = get_active_element(browser)
+        form = get_active_element()
 
 def fill_link_column():
-    form = get_active_element(browser)
+    form = get_active_element()
     form.send_keys('Quick Links', Keys.TAB)
-    form = get_active_element(browser)
+    form = get_active_element()
     for x in range(subrows):
         form.send_keys('http://placekitten.com', Keys.TAB, li.get_sentence(), Keys.TAB)
-        form = get_active_element(browser)
+        form = get_active_element()
 
 def fill_events():
-    form = get_active_element(browser)
+    form = get_active_element()
     api = config.get('API Sources', 'events')
     form.send_keys('Events Listing', Keys.TAB, 'http://placekitten.com', Keys.TAB, api, Keys.TAB)
 
 def fill_section_title():
-    form = get_active_element(browser)
+    form = get_active_element()
     form.send_keys('Another Section', Keys.TAB)
 
 def fill_video():
-    form = get_active_element(browser)
+    form = get_active_element()
     form.send_keys('https://www.youtube.com/watch?v=dMH0bHeiRNg', Keys.TAB,
         li.get_sentence(), Keys.TAB)
 
 def fill_news_listing():
-    form = get_active_element(browser)
+    form = get_active_element()
     api = config.get('API Sources', 'news_listing')
     form.send_keys('Recent News', Keys.TAB, 'http://placekitten.com', Keys.TAB, api, Keys.TAB)
 
@@ -234,15 +229,15 @@ def test_home_page():
 
 # stitch together screenshots and save a fullpage screenshot -------------------
 # from https://gist.github.com/fabtho/13e4a2e7cfbfde671b8fa81bbe9359fb
-def homepage_screenshot(driver, file):
-    print "Taking a screenshot and naming it " + file + "..."
+def homepage_screenshot(filename):
+    print "Taking a screenshot and naming it " + filename + "..."
     verbose = False # manual toggle for debugging
 
     # from http://stackoverflow.com/questions/1145850/how-to-get-height-of-entire-document-with-javascript
     js = 'return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);'
 
     scrollheight = browser.execute_script(js)
-    viewport_height = driver.execute_script("return window.innerHeight")
+    viewport_height = browser.execute_script("return window.innerHeight")
 
 
 
@@ -264,7 +259,7 @@ def homepage_screenshot(driver, file):
         slices.append(img)
 
 
-        viewport_height = driver.execute_script("return window.innerHeight")
+        viewport_height = browser.execute_script("return window.innerHeight")
         offset += (img.size[1] - viewport_height)
 
         firstIteration = False
@@ -286,7 +281,7 @@ def homepage_screenshot(driver, file):
         screenshot.paste(img, (0, offset))
         offset += img.size[1]
 
-    screenshot.save(file)
+    screenshot.save(filename)
 
     # show admin and nav
     browser.execute_script("document.getElementById('wpadminbar').style.display = 'initial';")
