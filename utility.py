@@ -11,6 +11,8 @@ import os
 import time
 from PIL import Image
 
+li = LoremIpsum()
+
 config = ConfigParser.ConfigParser()
 config.read('settings.cfg')
 
@@ -62,13 +64,21 @@ def login():
 def type_sentences(num):
     try:
         li = LoremIpsum()
-        get_active_element(browser).send_keys(li.get_sentences(num))
+        get_active_element().send_keys(li.get_sentences(num))
     except:
         print "Soemthing's not right. Make sure you've selected a text field.\n"
         pass
 
+# requires that a valid input field is active
+def type_fewer_than(limit):
+    try:
+        li = LoremIpsum()
+        get_active_element().send_keys(li.get_sentence()[:limit])
+    except:
+        print "Soemthing's not right. Make sure you've selected a text field.\n"
+        pass
 
-def get_active_element(browser):
+def get_active_element():
     elem = browser.switch_to.active_element
     if isinstance(elem, dict):
         elem = browser.switch_to.active_element['value']
