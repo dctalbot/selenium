@@ -222,67 +222,11 @@ def test_home_page():
     time.sleep(1)
     preview.click()
     browser.switch_to_window(browser.window_handles[1])
-
-
-
-
-
-# stitch together screenshots and save a fullpage screenshot -------------------
-# from https://gist.github.com/fabtho/13e4a2e7cfbfde671b8fa81bbe9359fb
-def homepage_screenshot(filename):
-    print "Taking a screenshot and naming it " + filename + "..."
-    verbose = False # manual toggle for debugging
-
-    # from http://stackoverflow.com/questions/1145850/how-to-get-height-of-entire-document-with-javascript
-    js = 'return Math.max( document.body.scrollHeight, document.body.offsetHeight, document.documentElement.clientHeight, document.documentElement.scrollHeight, document.documentElement.offsetHeight);'
-
-    scrollheight = browser.execute_script(js)
-    viewport_height = browser.execute_script("return window.innerHeight")
-
-
-
-    slices = []
-    offset = 0
-    firstIteration = True
-    while offset < scrollheight:
-        if verbose:
-            print "offset1:", offset
-
-        # hide admin and nav after first screenshot
-        if not firstIteration:
-            browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
-            browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'none';")
-
-        browser.execute_script("window.scrollTo(0, %s);" % offset)
-        time.sleep(2)
-        img = Image.open(StringIO(browser.get_screenshot_as_png()))
-        slices.append(img)
-
-
-        viewport_height = browser.execute_script("return window.innerHeight")
-        offset += (img.size[1] - viewport_height)
-
-        firstIteration = False
-
-
-        if verbose:
-            print "scrollheight: ", scrollheight
-
-
-    # sum heights of slices
-    # final_height = 0
-    # for img in slices:
-    #     final_height += img.size[1]
-    final_height = slices[0].size[1] * len(slices)
-
-    screenshot = Image.new('RGB', (slices[0].size[0], final_height))
-    offset = 0
-    for img in slices:
-        screenshot.paste(img, (0, offset))
-        offset += img.size[1]
-
-    screenshot.save(filename)
-
-    # show admin and nav
-    browser.execute_script("document.getElementById('wpadminbar').style.display = 'initial';")
+    time.sleep(20) # load content
+    
+    # hide header
+    browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'none';")
+    # take screenshot
+    screenshot_and_save(time.strftime("homepage-%Y%m%d-%H%M%S.png"))
+    # show header
     browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'initial';")
