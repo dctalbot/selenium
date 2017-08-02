@@ -128,7 +128,7 @@ def test_home_page():
     # new page
     browser.get('https://aerodev.engin.umich.edu/wp-admin/post-new.php?post_type=page')
 
-    print 'Building a Home Page...'
+    print 'Building a Homepage...'
 
     # select template
     browser.find_element_by_xpath("//select[@id='page_template']/option[text()='Home Page']").click()
@@ -222,11 +222,9 @@ def test_home_page():
     time.sleep(1)
     preview.click()
     browser.switch_to_window(browser.window_handles[1])
-    time.sleep(20) # load content
-    
-    # hide header
-    browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'none';")
+
+    # load content
+    WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "header")))
+
     # take screenshot
     screenshot_and_save(time.strftime("homepage-%Y%m%d-%H%M%S.png"))
-    # show header
-    browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'initial';")

@@ -4,8 +4,8 @@
 Make sure the General Settings in settings.cfg are what you want them to be.
 These include your username, password, the Wordpress Login url of the site you wish to test, API endpoints, browser etc.
 
-Firefox requires the [geckodriver](https://github.com/mozilla/geckodriver/releases).
-Chrome requires the[ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads).
+Firefox requires [geckodriver](https://github.com/mozilla/geckodriver/releases).
+Chrome requires [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads).
 
 ## Run
 

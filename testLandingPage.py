@@ -146,3 +146,9 @@ def test_landing_page():
     time.sleep(1)
     preview.click()
     browser.switch_to_window(browser.window_handles[1])
+
+    # load content
+    WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "header")))
+
+    # take screenshot
+    screenshot_and_save(time.strftime("landingPage-%Y%m%d-%H%M%S.png"))
