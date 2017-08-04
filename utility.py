@@ -31,18 +31,23 @@ chrome_options.add_argument("disable-infobars")
 browser = webdriver.Firefox() if 'x' in config.get('Settings', 'browser', 1) else webdriver.Chrome(chrome_options=chrome_options)
 
 
-def login():
+def login(url):
     uniqname = config.get('Settings', 'uniqname')
     password = config.get('Settings', 'password')
-    site_login = config.get('Settings', 'site_login')
 
     if uniqname is 'un' or password is 'pw':
         print "Please set the username and password in the configuration file."
         exit()
 
     browser.implicitly_wait(5) # seconds
-    browser.get(site_login)
+    browser.get(url)
     time.sleep(1) # sometimes chrome is too fast
+
+    # click sign in with un and pw if necessary
+    try:
+        browser.find_element_by_link_text("Log in with username and password").click()
+    except:
+        pass
 
     # Log in
     browser.find_element_by_id('user_login').send_keys(uniqname + '@umich.edu', Keys.TAB, password, Keys.ENTER)
@@ -70,20 +75,16 @@ def type_sentences(quantity):
         print "Soemthing's not right. Make sure you've selected a text field.\n"
         pass
 
-# requires that a valid input field is active
-def type_at_most(limit):
-    try:
-        li = LoremIpsum()
-        get_active_element().send_keys(li.get_sentence()[:limit])
-    except:
-        print "Soemthing's not right. Make sure you've selected a text field.\n"
-        pass
+def get_characters(limit):
+    return li.get_sentences(2)[:limit]
 
 def get_active_element():
     elem = browser.switch_to.active_element
     if isinstance(elem, dict):
         elem = browser.switch_to.active_element['value']
     return elem
+
+
 
 
 # requires filename has valid extension e.g. .png
@@ -97,17 +98,16 @@ def screenshot_and_save(filename):
     scrollheight = browser.execute_script(js)
     viewport_height = browser.execute_script("return window.innerHeight")
 
-
+    # hide admin and nav
+    try:
+        browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
+        browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'none';")
+    except:
+        pass
 
     slices = []
     offset = 0
-    firstIteration = True
     while offset < scrollheight:
-
-        # hide admin and nav after first screenshot
-        if not firstIteration:
-            browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
-
         browser.execute_script("window.scrollTo(0, %s);" % offset)
         time.sleep(2)
         img = Image.open(StringIO(browser.get_screenshot_as_png()))
@@ -117,16 +117,13 @@ def screenshot_and_save(filename):
         viewport_height = browser.execute_script("return window.innerHeight")
         offset += (img.size[1] - viewport_height)
 
-        firstIteration = False
-
-
 
     final_height = slices[0].size[1] * len(slices)
     trim = final_height % scrollheight
 
     slices[-1] = slices[-1].crop((0, trim, slices[-1].size[0], slices[0].size[1]))
 
-    # sum heights of slices
+    # height of slices
     final_height -= trim
 
     screenshot = Image.new('RGB', (slices[0].size[0], final_height))
@@ -137,5 +134,9 @@ def screenshot_and_save(filename):
 
     screenshot.save(filename)
 
-    # show admin and nav
-    browser.execute_script("document.getElementById('wpadminbar').style.display = 'initial';")
+    try:
+        # show admin and nav
+        browser.execute_script("document.getElementById('wpadminbar').style.display = 'initial';")
+        browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'initial';")
+    except:
+        pass
