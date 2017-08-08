@@ -29,17 +29,17 @@ chrome_options = Options()
 chrome_options.add_argument("disable-infobars")
 
 browser = webdriver.Firefox() if 'x' in config.get('Settings', 'browser', 1) else webdriver.Chrome(chrome_options=chrome_options)
-
+browser.implicitly_wait(5) # seconds
 
 def login(url):
     uniqname = config.get('Settings', 'uniqname')
     password = config.get('Settings', 'password')
 
-    if uniqname is 'un' or password is 'pw':
+    if uniqname == 'un' or password == 'pw':
         print "Please set the username and password in the configuration file."
         exit()
 
-    browser.implicitly_wait(5) # seconds
+    # browser.implicitly_wait(5) # seconds
     browser.get(url)
     time.sleep(1) # sometimes chrome is too fast
 

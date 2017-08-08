@@ -145,7 +145,7 @@ def test_home_page():
             break
 
     # remove admin bar that sometimes hides elements
-    browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
+    # browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
 
     cols_in_row = 0
     add_row.click()
@@ -153,7 +153,7 @@ def test_home_page():
     # add rows
     for row in range(len(column_sequence)):
 
-        if cols_in_row is 3:
+        if cols_in_row == 3:
             add_row.click() # new row
             cols_in_row = 0 # reset counter
 
@@ -214,7 +214,12 @@ def test_home_page():
             time.sleep(4)
             search.click()
             search.send_keys(Keys.TAB, Keys.ENTER)
-            browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
+
+            select = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".button.media-button.button-primary.button-large.media-button-select"))
+                )
+            select.click()
+            # browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
 
     # preview
     print 'Generating preview...'

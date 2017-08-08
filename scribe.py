@@ -39,13 +39,19 @@ while True:
 
     # generate deptarment homepage
     if mode is 1:
-        login(config.get('Settings', 'dept_login'))
+        try:
+            login(config.get('Settings', 'dept_login'))
+        except:
+            pass
         test_home_page()
         print 'Done!\nOk, great. Now you can make all the manual edits you want.'
 
     # generate department landing page
     elif mode is 2:
-        login(config.get('Settings', 'dept_login'))
+        try:
+            login(config.get('Settings', 'dept_login'))
+        except:
+            pass
         test_landing_page()
         print 'Done!\nOk, great. Now you can make all the manual edits you want.'
 

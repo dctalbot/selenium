@@ -84,14 +84,13 @@ def test_landing_page():
             break
 
     # remove admin bar that sometimes hides elements
-    browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
+    # browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
 
-    add_row.click()
+
 
     # add rows
     for row in range(len(column_sequence)):
-
-
+        add_row.click()
 
         # find and click bottom-most Add Column(s) button
         add_col_elems = browser.find_elements_by_link_text("Add Column(s)")
@@ -102,7 +101,6 @@ def test_landing_page():
 
         browser.find_element_by_link_text(column_sequence[row]).click()
         browser.find_element_by_id('footer-upgrade').click() # click away
-        add_row.click()
 
     # extend Promo Row to be 3 units long
     for elem in browser.find_elements_by_link_text("Add Row"):
@@ -138,7 +136,12 @@ def test_landing_page():
             time.sleep(4)
             search.click()
             search.send_keys(Keys.TAB, Keys.ENTER)
-            browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
+
+            select = WebDriverWait(browser, 10).until(
+                EC.element_to_be_clickable((By.CSS_SELECTOR, ".button.media-button.button-primary.button-large.media-button-select"))
+                )
+            select.click()
+            # browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
 
     # preview
     print 'Generating preview...'
