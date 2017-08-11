@@ -25,6 +25,7 @@ try:
     login(config.get('Settings', 'dept_login'))
 except:
     print "Couldn't log in"
+    browser.close()
     quit()
     
 # print menu and prompt user

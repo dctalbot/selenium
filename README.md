@@ -1,7 +1,7 @@
 # Scribe ~ A Selenium script to automate WordPress testing
 
 ## Setup
-Enter your WordPress username and password in setting.cfg
+Enter your WordPress username and password in settings.cfg
 
 Firefox requires [geckodriver](https://github.com/mozilla/geckodriver/releases).
 Chrome requires [ChromeDriver](https://sites.google.com/a/chromium.org/chromedriver/downloads).
