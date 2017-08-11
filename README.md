@@ -1,4 +1,4 @@
-# Scribe ~ A Selenium script to automate Wordpress testing.
+# Scribe ~ A Selenium script to automate WordPress testing
 
 ## Setup
 Enter your WordPress username and password in setting.cfg
