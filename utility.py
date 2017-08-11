@@ -32,6 +32,7 @@ browser = webdriver.Firefox() if 'x' in config.get('Settings', 'browser', 1) els
 browser.implicitly_wait(5) # seconds
 
 def login(url):
+    print "Logging in..."
     uniqname = config.get('Settings', 'uniqname')
     password = config.get('Settings', 'password')
 

@@ -124,7 +124,7 @@ def fill_news_listing():
 
 
 # create home page -------------------------------------------------------------
-def test_home_page():
+def test_homepage():
     # new page
     browser.get('https://aerodev.engin.umich.edu/wp-admin/post-new.php?post_type=page')
 

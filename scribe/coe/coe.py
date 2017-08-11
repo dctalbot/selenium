@@ -1,7 +1,7 @@
+import sys
+sys.path.append('..')
 from utility import *
-# from testCollegeHomepage import test_college_homepage
-from testHomePage import test_home_page
-from testLandingPage import test_landing_page
+from testHomepage import test_homepage
 # import new test functions here and include them in a menu option below
 
 
@@ -10,8 +10,8 @@ def print_menu():
     print (30 * '-')
     print ("  SCRIBE ~ A SELENIUM SCRIPT")
     print (30 * '-')
-    print ("1. Generate Department Homepage")
-    print ("2. Generate Department Landing Page")
+    print ("0. Log In")
+    print ("1. Generate CoE Homepage")
     print ("3. Capture Fullpage Screnshot")
     print ("4. Quit")
     print (30 * '-' + '\n')
@@ -19,40 +19,28 @@ def print_menu():
 
 
 # driver------------------------------------------------------------------------
-print "\nHello! We'll go ahead and log you into Wordpress...\n"
+
+# log in
+try:
+    login(config.get('Settings', 'coe_login'))
+except:
+    print "Couldn't log in"
+    quit()
 
 # print menu and prompt user
 while True:
     print_menu()
 
     try:
-        mode = int(raw_input('Enter your choice [1-5]: '))
+        mode = int(raw_input('Enter your choice [0-4]: '))
     except ValueError:
         print "That's not a number!\n"
         continue
-
-    # generate college site homepage
-    # if mode is 1:
-    #     login(config.get('Settings', 'college_login'))
-    #     test_college_homepage()
-    #     print 'Done!\nOk, great. Now you can make all the manual edits you want.'
-
-    # generate deptarment homepage
-    if mode is 1:
-        try:
-            login(config.get('Settings', 'dept_login'))
-        except:
-            pass
-        test_home_page()
-        print 'Done!\nOk, great. Now you can make all the manual edits you want.'
-
-    # generate department landing page
-    elif mode is 2:
-        try:
-            login(config.get('Settings', 'dept_login'))
-        except:
-            pass
-        test_landing_page()
+            
+    # generate coe homepage
+    elif mode is 1:
+        login(config.get('Settings', 'college_login'))
+        test_college_homepage()
         print 'Done!\nOk, great. Now you can make all the manual edits you want.'
 
     # capture fullpage screenshot
