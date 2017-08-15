@@ -31,6 +31,9 @@ chrome_options.add_argument("disable-infobars")
 browser = webdriver.Firefox() if 'x' in config.get('Settings', 'browser', 1) else webdriver.Chrome(chrome_options=chrome_options)
 browser.implicitly_wait(5) # seconds
 
+
+# a really complicated generic login function that tries to log in
+# every possible way
 def login(url):
     print "Logging in..."
     uniqname = config.get('Settings', 'uniqname')
@@ -44,14 +47,13 @@ def login(url):
     browser.get(url)
     time.sleep(1) # sometimes chrome is too fast
 
-    # click sign in with un and pw if necessary
+    # click sign in with un and pw if necessary, else just type
     try:
         browser.find_element_by_link_text("Log in with username and password").click()
+        browser.find_element_by_id('user_login').send_keys(uniqname, Keys.TAB, password, Keys.ENTER)
     except:
-        pass
-
-    # Log in
-    browser.find_element_by_id('user_login').send_keys(uniqname + '@umich.edu', Keys.TAB, password, Keys.ENTER)
+        browser.find_element_by_id('user_login').send_keys(uniqname + '@umich.edu', Keys.TAB, password, Keys.ENTER)
+    
 
     # prove your humanity with this nonhuman code
     try:
