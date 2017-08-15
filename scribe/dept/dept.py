@@ -62,5 +62,4 @@ while True:
             break
 
     else:
-        print 'Bye!'
         exit()
