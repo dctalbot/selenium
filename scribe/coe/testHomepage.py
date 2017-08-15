@@ -127,4 +127,8 @@ def test_homepage():
     WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "header")))
 
     # take screenshot
-    screenshot_and_save(time.strftime("homepage-%Y%m%d-%H%M%S.png"))
+    try:
+        screenshot_and_save(time.strftime("homepage-%Y%m%d-%H%M%S.png"))
+    except:
+        print "Couldn't take screenshot"
+        pass
