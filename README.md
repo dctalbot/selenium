@@ -22,7 +22,8 @@ These tests should ideally be run on a large monitor with a decent computer.
 Once the script starts, move you cursor off the screen and keep the window open.
 
 ### Screenshots
-Automated screenshots will come out a bit wonky. Instead, you can use a browser's built-in capability:
+Automated screenshots will come out a bit wonky and often enter an infinite loop,
+especially if you have the window fullscreen. Instead, you can use a browser's built-in capability:
 
 #### Firefox
 Type this: Shift+F2 screenshot --fullpage
