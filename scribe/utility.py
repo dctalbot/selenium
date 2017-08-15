@@ -105,7 +105,7 @@ def screenshot_and_save(filename):
         browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'none';")
     except:
         pass
-
+    
     slices = []
     offset = 0
     while offset < scrollheight:
@@ -113,7 +113,6 @@ def screenshot_and_save(filename):
         time.sleep(2)
         img = Image.open(StringIO(browser.get_screenshot_as_png()))
         slices.append(img)
-
 
         viewport_height = browser.execute_script("return window.innerHeight")
         offset += (img.size[1] - viewport_height)
@@ -141,3 +140,4 @@ def screenshot_and_save(filename):
         browser.execute_script("document.getElementsByTagName('header')[0].style.display = 'initial';")
     except:
         pass
+        
