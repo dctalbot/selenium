@@ -1,13 +1,11 @@
 from utility import *
-from cStringIO import StringIO
-
 
 # preferences-------------------------------------------------------------------
 
 # Ordered sequence of columns in rows.
 # Must start with Feature (3) as of now.
 # The idea is that this list should be the only thing you need to change
-# when testing various Home Page configurations. But for now it must start with feature (3)
+# when testing various Homepage configurations. But for now it must start with feature (3)
 # Feel free to add/delete/move other columns and rows
 # Just make sure the column widths of each row sum to 3
 column_sequence = [
@@ -151,36 +149,37 @@ def test_homepage():
     add_row.click()
 
     # add rows
-    for row in range(len(column_sequence)):
+    try:
+        for row in range(len(column_sequence)):
 
-        if cols_in_row == 3:
-            add_row.click() # new row
-            cols_in_row = 0 # reset counter
+            if cols_in_row == 3:
+                add_row.click() # new row
+                cols_in_row = 0 # reset counter
+
+            # find and click bottom-most Add Column(s) button
+            add_col = None
+            add_col_elems = browser.find_elements_by_link_text("Add Column(s)")
+            for elem in reversed(add_col_elems):
+                if elem.is_displayed():
+                    add_col = elem
+                    break
+
+            add_col.click()
+            cols_in_row += int(column_sequence[row][-2]) # record row width
+
+            browser.find_element_by_link_text(column_sequence[row]).click()
+            browser.find_element_by_id('footer-upgrade').click() # click away
 
 
-        # find and click bottom-most Add Column(s) button
-        add_col = None
-        add_col_elems = browser.find_elements_by_link_text("Add Column(s)")
-        for elem in reversed(add_col_elems):
-            if elem.is_displayed():
-                add_col = elem
-                break
+        # add subrows
+        for elem in browser.find_elements_by_link_text("Add Row"):
+            if elem.is_displayed() and elem != add_row:
+                for x in range(subrows):
+                    elem.click()
+    except:
+        print "Couldn't add all rows"
+        return
 
-
-        add_col.click()
-        cols_in_row += int(column_sequence[row][-2]) # record row width
-
-        browser.find_element_by_link_text(column_sequence[row]).click()
-        browser.find_element_by_id('footer-upgrade').click() # click away
-
-
-    # add subrows
-    for elem in browser.find_elements_by_link_text("Add Row"):
-        if elem.is_displayed() and elem != add_row:
-            for x in range(subrows):
-                elem.click()
-
-    # populate info
     dispatcher = {
     'Promo Column (1)' : fill_promo_column,
     'Promo Row (3)' : fill_promo_row,
@@ -195,41 +194,56 @@ def test_homepage():
     'In The News Listing (1)' : fill_in_the_news_listing
     }
 
-    print 'Writing lots of content...'
-    for index in range(len(column_sequence)):
-        dispatcher[column_sequence[index]]()
+    
+    # write content
+    try:
+        print 'Writing lots of content...'
+        for index in range(len(column_sequence)):
+            dispatcher[column_sequence[index]]()
+    except:
+        print "Couldn't write all content"
+        return
 
 
     # add images
-    print 'Adding some photos...'
-    add_image_buttons = browser.find_elements_by_link_text("Add Image")
-    for add_image in add_image_buttons:
-        if add_image.is_displayed():
-            add_image.click()
-            time.sleep(1.5)
-            media_tab = browser.find_element_by_link_text("Media Library")
-            media_tab.click()
-            search = browser.find_element_by_id('media-search-input')
-            search.send_keys(sample_image_keyword)
-            time.sleep(4)
-            search.click()
-            search.send_keys(Keys.TAB, Keys.ENTER)
-
-            select = WebDriverWait(browser, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".button.media-button.button-primary.button-large.media-button-select"))
-                )
-            select.click()
-            # browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
+    try:
+        print 'Adding some photos...'
+        add_image_buttons = browser.find_elements_by_link_text("Add Image")
+        for add_image in add_image_buttons:
+            if add_image.is_displayed():
+                add_image.click()
+                time.sleep(1.5)
+                media_tab = browser.find_element_by_link_text("Media Library")
+                media_tab.click()
+                search = browser.find_element_by_id('media-search-input')
+                search.send_keys(sample_image_keyword)
+                time.sleep(4)
+                search.click()
+                search.send_keys(Keys.TAB, Keys.ENTER)
+        
+                select = WebDriverWait(browser, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, ".button.media-button.button-primary.button-large.media-button-select"))
+                    )
+                select.click()
+    except:
+        print "Couldn't add all photos"
+        
 
     # preview
-    print 'Generating preview...'
-    preview = browser.find_element_by_id('post-preview')
-    time.sleep(1)
-    preview.click()
-    browser.switch_to_window(browser.window_handles[1])
-
-    # load content
-    WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "header")))
+    try:
+        print 'Generating preview...'
+        preview = browser.find_element_by_id('post-preview')
+        time.sleep(1)
+        preview.click()
+        browser.switch_to_window(browser.window_handles[-1])
+        WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "header")))
+    except:
+        print "Couldn't confirm the switch to Preview"
+        return
 
     # take screenshot
-    screenshot_and_save(time.strftime("homepage-%Y%m%d-%H%M%S.png"))
+    try:
+        screenshot_and_save(time.strftime("deptHomepage-%Y%m%d-%H%M%S.png"))
+    except:
+        print "Couldn't take screenshot"
+        return

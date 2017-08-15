@@ -1,5 +1,5 @@
 import sys
-sys.path.append('..')
+sys.path.append('.')
 from utility import *
 from testHomepage import test_homepage
 from testLandingPage import test_landing_page
@@ -51,15 +51,7 @@ while True:
 
     # capture fullpage screenshot
     elif mode is 3:
-        while True:
-            try:
-                name = raw_input("Enter a name ending in .png: ")
-                assert name[-4:] == '.png'
-                screenshot_and_save(name)
-            except AssertionError:
-                print "Include the .png extension when you name your file"
-                continue
-            break
+        screenshot_and_save(time.strftime("dept-%Y%m%d-%H%M%S.png"))
 
     else:
         exit()

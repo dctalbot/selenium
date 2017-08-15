@@ -87,28 +87,30 @@ def test_landing_page():
     # browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
 
 
-
     # add rows
-    for row in range(len(column_sequence)):
-        add_row.click()
+    try:
+        for row in range(len(column_sequence)):
+            add_row.click()
 
-        # find and click bottom-most Add Column(s) button
-        add_col_elems = browser.find_elements_by_link_text("Add Column(s)")
-        for add_col in reversed(add_col_elems):
-            if add_col.is_displayed():
-                add_col.click()
-                break
+            # find and click bottom-most Add Column(s) button
+            add_col_elems = browser.find_elements_by_link_text("Add Column(s)")
+            for add_col in reversed(add_col_elems):
+                if add_col.is_displayed():
+                    add_col.click()
+                    break
 
-        browser.find_element_by_link_text(column_sequence[row]).click()
-        browser.find_element_by_id('footer-upgrade').click() # click away
+            browser.find_element_by_link_text(column_sequence[row]).click()
+            browser.find_element_by_id('footer-upgrade').click() # click away
 
-    # extend Promo Row to be 3 units long
-    for elem in browser.find_elements_by_link_text("Add Row"):
-        if elem.is_displayed() and elem != add_row:
-            for x in range(2):
-                elem.click()
+        # extend Promo Row to be 3 units long
+        for elem in browser.find_elements_by_link_text("Add Row"):
+            if elem.is_displayed() and elem != add_row:
+                for x in range(2):
+                    elem.click()
+    except:
+        print "Couldn't add all rows"
+        return
 
-    # populate info
     dispatcher = {
     'Promo Row (3)' : fill_promo_row,
     'Video' : fill_video,
@@ -117,41 +119,53 @@ def test_landing_page():
     'Text Block (3)' : fill_text_block
     }
 
-    print 'Writing lots of content...'
-    for index in range(len(column_sequence)):
-        dispatcher[column_sequence[index]]()
-
+    # write content
+    try:
+        print 'Writing lots of content...'
+        for index in range(len(column_sequence)):
+            dispatcher[column_sequence[index]]()
+    except:
+        print "Couldn't write all content"
+        return
 
     # add images
-    print 'Adding some photos...'
-    add_image_buttons = browser.find_elements_by_link_text("Add Image")
-    for add_image in add_image_buttons:
-        if add_image.is_displayed():
-            add_image.click()
-            time.sleep(1.5)
-            media_tab = browser.find_element_by_link_text("Media Library")
-            media_tab.click()
-            search = browser.find_element_by_id('media-search-input')
-            search.send_keys(sample_image_keyword)
-            time.sleep(4)
-            search.click()
-            search.send_keys(Keys.TAB, Keys.ENTER)
+    try:
+        print 'Adding some photos...'
+        add_image_buttons = browser.find_elements_by_link_text("Add Image")
+        for add_image in add_image_buttons:
+            if add_image.is_displayed():
+                add_image.click()
+                time.sleep(1.5)
+                media_tab = browser.find_element_by_link_text("Media Library")
+                media_tab.click()
+                search = browser.find_element_by_id('media-search-input')
+                search.send_keys(sample_image_keyword)
+                time.sleep(4)
+                search.click()
+                search.send_keys(Keys.TAB, Keys.ENTER)
 
-            select = WebDriverWait(browser, 10).until(
-                EC.element_to_be_clickable((By.CSS_SELECTOR, ".button.media-button.button-primary.button-large.media-button-select"))
-                )
-            select.click()
-            # browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
+                select = WebDriverWait(browser, 10).until(
+                    EC.element_to_be_clickable((By.CSS_SELECTOR, ".button.media-button.button-primary.button-large.media-button-select"))
+                    )
+                select.click()
+    except:
+        print "Couldn't add all photos"
 
     # preview
-    print 'Generating preview...'
-    preview = browser.find_element_by_id('post-preview')
-    time.sleep(1)
-    preview.click()
-    browser.switch_to_window(browser.window_handles[1])
-
-    # load content
-    WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "header")))
-
+    try:
+        print 'Generating preview...'
+        preview = browser.find_element_by_id('post-preview')
+        time.sleep(1)
+        preview.click()
+        browser.switch_to_window(browser.window_handles[-1])
+        WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "header")))
+    except:
+        print "Couldn't confirm the switch to Preview"
+        return
+        
     # take screenshot
-    screenshot_and_save(time.strftime("landingPage-%Y%m%d-%H%M%S.png"))
+    try:
+        screenshot_and_save(time.strftime("deptLandingPage-%Y%m%d-%H%M%S.png"))
+    except:
+        print "Couldn't take screenshot"
+        pass
