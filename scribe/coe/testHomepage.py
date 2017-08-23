@@ -1,15 +1,13 @@
 from utility import *
-from cStringIO import StringIO
-
 
 # preferences-------------------------------------------------------------------
 
 # upload a sample image to your Wordpress media
-# library and use this keyword to search for it
-lead_image_keyword = '1-1'
+# library and use a keyword to search for it
+lead_image_keyword = '1-1_img'
 feature_image_keyword = 'feature'
 community_image_keyword = 'new-lead'
-
+jumbotron_keyword = 'homepage-hero'
 
 
 
@@ -18,6 +16,7 @@ community_image_keyword = 'new-lead'
 
 def fill_lead():
     print "Filling out the Lead section..."
+    browser.find_element_by_xpath("//label[text()='Lead Message']").click()
     form = get_active_element()
     form.send_keys(get_characters(55), Keys.TAB, 'http://placekitten.com', Keys.TAB)
     for link in range(4):
@@ -30,6 +29,8 @@ def fill_lead():
 
 def fill_feature():
     print "Filling out the Inspire + Feature section..."
+    browser.find_element_by_link_text("Inspire + Feature").click()
+    browser.find_element_by_xpath("//label[text()='Inspire (Conversion): Title']").click()
     form = get_active_element()
     form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentences(2), Keys.TAB)
     for link in range(2):
@@ -42,13 +43,15 @@ def fill_feature():
 
 def fill_community():
     print "Filling out the Inspire + Feature section..."
+    browser.find_element_by_link_text("Inspire + Community + Quote").click()
+    browser.find_element_by_xpath("//label[text()='Inspire (Community): Title']").click()
     form = get_active_element()
     form.send_keys(li.get_sentence(), Keys.TAB, li.get_sentences(2), Keys.TAB)
     for link in range(2):
         form = get_active_element()
         form.send_keys(get_characters(18), Keys.TAB, 'http://placekitten.com', Keys.TAB)
+    
     form = get_active_element()
-
     form.send_keys('http://placekitten.com', Keys.TAB, li.get_sentences(2), Keys.TAB)
 
     for link in range(2):
@@ -64,16 +67,50 @@ def add_images(keyword):
     for add_image in add_image_buttons:
         if add_image.is_displayed():
             add_image.click()
-            time.sleep(1.5)
-            media_tab = browser.find_element_by_link_text("Media Library")
-            media_tab.click()
+            browser.find_element_by_link_text("Media Library").click()
             search = browser.find_element_by_id('media-search-input')
             search.send_keys(keyword)
-            time.sleep(4)
+            # wait for loading spinner
+            WebDriverWait(browser, 1).until(
+                EC.presence_of_element_located(
+                (By.CLASS_NAME, "is-active"))
+                )
+            # wait for thumbnails
+            WebDriverWait(browser, 1).until(
+                EC.visibility_of_element_located(
+                (By.CLASS_NAME, "thumbnail"))
+                )
             search.click()
             search.send_keys(Keys.TAB, Keys.ENTER)
-            browser.find_element_by_css_selector('.button.media-button.button-primary.button-large.media-button-select').click()
+            select = WebDriverWait(browser, 1).until(
+                EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, ".button.media-button.button-primary.button-large.media-button-select"))
+                )
+            select.click()
 
+def set_featured_image(keyword):
+    print 'Adding a featured image...'
+    browser.find_element_by_id('set-post-thumbnail').click()
+    browser.find_element_by_link_text("Media Library").click()
+    search = browser.find_element_by_id('media-search-input')
+    search.send_keys(keyword)
+    # wait for loading spinner
+    WebDriverWait(browser, 1).until(
+        EC.presence_of_element_located(
+        (By.CLASS_NAME, "is-active"))
+        )
+    # wait for thumbnails
+    WebDriverWait(browser, 1).until(
+        EC.visibility_of_element_located(
+        (By.CLASS_NAME, "thumbnail"))
+        )
+    search.click()
+    search.send_keys(Keys.TAB, Keys.ENTER)
+    select = WebDriverWait(browser, 5).until(
+        EC.element_to_be_clickable(
+        (By.CSS_SELECTOR, ".button.media-button.button-primary.button-large.media-button-select"))
+        )
+    select.click()
 
 # create home page -------------------------------------------------------------
 def test_homepage():
@@ -90,45 +127,59 @@ def test_homepage():
 
     print 'Writing lots of content...'
 
-    # fill Lead section
-    browser.find_element_by_xpath("//label[text()='Lead Message']").click()
-    fill_lead()
-    add_images(lead_image_keyword)
+    # Lead
+    try:
+        fill_lead()
+        add_images(lead_image_keyword)
+    except:
+        print "Failed to complete filling out Lead section"
 
-    # fill Inspire + Feature section
-    browser.find_element_by_link_text("Inspire + Feature").click()
-    browser.find_element_by_xpath("//label[text()='Inspire (Conversion): Title']").click()
-    fill_feature()
-    add_images(feature_image_keyword)
+    # Inspire + Feature
+    try:
+        fill_feature()
+        add_images(feature_image_keyword)
+    except:
+        print "Failed to complete filling out Inspire + Feature sections"
 
-    # fill Inspire + Community + Quote section
-    browser.find_element_by_link_text("Inspire + Community + Quote").click()
-    browser.find_element_by_xpath("//label[text()='Inspire (Community): Title']").click()
-    fill_community()
-    add_images(community_image_keyword)
-
-    exit()
-
-    # remove admin bar that sometimes hides elements
-    browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
-
-
-    browser.find_element_by_id('footer-upgrade').click() # click away
-
-
+    # Inspire + Community + Quote
+    try:
+        fill_community()
+        add_images(community_image_keyword)
+    except:
+        print "Failed to complete filling out Inspire + Community + Quote section"
+    
+    # set featured image
+    try:
+        set_featured_image(jumbotron_keyword)
+    except:
+        "Failed to set the homepage jumbotron image"
+        
     # preview
     print 'Generating preview...'
     preview = browser.find_element_by_id('post-preview')
     time.sleep(1)
     preview.click()
-    browser.switch_to_window(browser.window_handles[1])
+    browser.switch_to_window(browser.window_handles[-1])
 
     # load content
-    WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "header")))
+    WebDriverWait(browser, 20).until(EC.presence_of_all_elements_located((By.TAG_NAME, "footer")))
+    
+    # remove nav bars
+    try:
+        browser.execute_script("document.getElementById('wpadminbar').style.display = 'none';")
+        browser.execute_script("document.getElementById('masthead').style.display = 'none';")
+    except:
+        pass
 
     # take screenshot
     try:
-        screenshot_and_save(time.strftime("homepage-%Y%m%d-%H%M%S.png"))
+        screenshot_and_save(time.strftime("coe-homepage-%Y%m%d-%H%M%S.png"))
     except:
         print "Couldn't take screenshot"
+        
+    # place admin bar
+    try:
+        browser.execute_script("document.getElementById('wpadminbar').style.display = 'initial';")
+        browser.execute_script("document.getElementById('masthead').style.display = 'initial';")
+    except:
         pass
