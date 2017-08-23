@@ -38,14 +38,13 @@ def login(url):
     print "Logging in..."
     uniqname = config.get('Settings', 'uniqname')
     password = config.get('Settings', 'password')
-
+    
+    # default settings
     if uniqname == 'un' or password == 'pw':
         print "Please set the username and password in the configuration file."
         exit()
 
-    # browser.implicitly_wait(5) # seconds
     browser.get(url)
-    time.sleep(1) # sometimes chrome is too fast
 
     # click sign in with un and pw if necessary, else just type
     try:
@@ -54,20 +53,23 @@ def login(url):
     except:
         browser.find_element_by_id('user_login').send_keys(uniqname + '@umich.edu', Keys.TAB, password, Keys.ENTER)
     
-
+    # for some reason my machine isn't making me do this anymore
+    # this is an annoying jetpack feature that you should disable
     # prove your humanity with this nonhuman code
-    try:
-        digits = browser.find_element(By.XPATH, "//form[@id='loginform']/div[2]").text
-        browser.find_element_by_id('wp-submit').click()
-        time.sleep(2)
-        browser.find_element_by_id('user_login').send_keys(uniqname + '@umich.edu', Keys.TAB, password, Keys.ENTER)
-        digits = re.findall('\d+', digits)
-        answer = 0
-        for i in digits:
-            answer += int(i)
-        browser.find_element_by_name('jetpack_protect_num').send_keys(answer)
-    except:
-        pass
+    # try:
+    #     digits = browser.find_element(By.XPATH, "//form[@id='loginform']/div[2]").text
+    #     # browser.find_element_by_id('wp-submit').click()
+    #     # time.sleep(0.5)
+    #     # browser.find_element_by_id('user_login').send_keys(uniqname + '@umich.edu', Keys.TAB, password, Keys.ENTER)
+    #     digits = re.findall('\d+', digits)
+    #     answer = 0
+    #     print sum(digits)
+    #     exit()
+    #     for i in digits:
+    #         answer += int(i)
+    #     browser.find_element_by_name('jetpack_protect_num').send_keys(answer)
+    # except:
+    #     pass
 
 # requires that a valid input field is active
 def type_sentences(quantity):
