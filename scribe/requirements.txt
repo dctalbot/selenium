@@ -1,0 +1,5 @@
+Pillow==4.2.1
+RandomWords==0.2.1
+regex==2017.7.11
+selenium==3.4.3
+termcolor==1.1.0
